@@ -1,5 +1,6 @@
 package io.github.hielkemaps.serverplugin;
 
+import io.github.hielkemaps.serverplugin.commands.Highscores;
 import io.github.hielkemaps.serverplugin.commands.Hub;
 import io.github.hielkemaps.serverplugin.commands.Spectate;
 import io.github.hielkemaps.serverplugin.commands.Tpa;
@@ -11,6 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 public class Main extends JavaPlugin {
@@ -28,12 +30,19 @@ public class Main extends JavaPlugin {
     }
 
     public void onEnable() {
+        this.saveDefaultConfig();
+
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         this.getServer().getPluginManager().registerEvents(new EventListener(), this);
         this.getServer().getScheduler().scheduleSyncRepeatingTask(instance, Main::tick, 1L, 1L);
-        new Hub();
-        new Tpa();
-        new Spectate();
+
+        List<String> disabledCommands = getConfig().getStringList("disabled-commands");
+        disabledCommands.forEach(c -> Bukkit.getLogger().info("[ServerPlugin] Disabled command " + c));
+
+        if(!disabledCommands.contains("hub")) new Hub();
+        if(!disabledCommands.contains("tpa")) new Tpa();
+        if(!disabledCommands.contains("spectate")) new Spectate();
+        if(!disabledCommands.contains("highscores")) new Highscores();
     }
 
     private static void tick() {

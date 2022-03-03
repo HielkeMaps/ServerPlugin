@@ -1,0 +1,9 @@
+io\github\hielkemaps\serverplugin\wrapper\PlayerManager.class
+io\github\hielkemaps\serverplugin\commands\Hub.class
+io\github\hielkemaps\serverplugin\wrapper\PlayerWrapper.class
+io\github\hielkemaps\serverplugin\commands\Highscores.class
+io\github\hielkemaps\serverplugin\commands\Spectate.class
+io\github\hielkemaps\serverplugin\Main.class
+io\github\hielkemaps\serverplugin\objects\ScorePair.class
+io\github\hielkemaps\serverplugin\events\EventListener.class
+io\github\hielkemaps\serverplugin\commands\Tpa.class
