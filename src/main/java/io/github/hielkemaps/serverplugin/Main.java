@@ -1,11 +1,12 @@
 package io.github.hielkemaps.serverplugin;
 
-import io.github.hielkemaps.serverplugin.commands.Highscores;
-import io.github.hielkemaps.serverplugin.commands.Hub;
-import io.github.hielkemaps.serverplugin.commands.Spectate;
-import io.github.hielkemaps.serverplugin.commands.Tpa;
+import dev.jorel.commandapi.CommandAPI;
+import io.github.hielkemaps.serverplugin.commands.*;
 import io.github.hielkemaps.serverplugin.events.EventListener;
+import io.github.hielkemaps.serverplugin.wrapper.PlayerManager;
+import io.github.hielkemaps.serverplugin.wrapper.PlayerWrapper;
 import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -31,18 +32,32 @@ public class Main extends JavaPlugin {
 
     public void onEnable() {
         this.saveDefaultConfig();
+        new ReloadConfig();
 
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         this.getServer().getPluginManager().registerEvents(new EventListener(), this);
         this.getServer().getScheduler().scheduleSyncRepeatingTask(instance, Main::tick, 1L, 1L);
 
-        List<String> disabledCommands = getConfig().getStringList("disabled-commands");
+        updateCommands();
+    }
+
+    public static void updateCommands(){
+        List<String> disabledCommands =  Main.getInstance().getConfig().getStringList("disabled-commands");
         disabledCommands.forEach(c -> Bukkit.getLogger().info("[ServerPlugin] Disabled command " + c));
 
         if(!disabledCommands.contains("hub")) new Hub();
+        else CommandAPI.unregister("hub");
+
         if(!disabledCommands.contains("tpa")) new Tpa();
+        else CommandAPI.unregister("tpa");
+
         if(!disabledCommands.contains("spectate")) new Spectate();
+        else CommandAPI.unregister("spectate");
+
         if(!disabledCommands.contains("highscores")) new Highscores();
+        else CommandAPI.unregister("highscores");
+
+        Bukkit.getOnlinePlayers().forEach(CommandAPI::updateRequirements);
     }
 
     private static void tick() {

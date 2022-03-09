@@ -25,11 +25,16 @@ public class Highscores {
 
                     List<ScorePair> highscores = getHighScores(count);
 
+                    Bukkit.getLogger().info("---------------------------------------------------------");
                     for (int i = 0; i < highscores.size(); i++) {
                         ScorePair pair = highscores.get(i);
                         int score = pair.getScore();
-                        p.sendMessage(i + 1 + ": " + pair.getName() + "," + pair.getTimeString() + " (" + score + ")");
+
+                        String message = i + 1 + ": " + pair.getName() + "," + pair.getTimeString() + " (" + score + ")";
+                        p.sendMessage(message);
+                        Bukkit.getLogger().info(message);
                     }
+                    Bukkit.getLogger().info("---------------------------------------------------------");
                 }).register();
     }
 

@@ -40,7 +40,7 @@ public class EventListener implements Listener {
                     return;
                 }
 
-                if (block.getType() == Material.SWEET_BERRY_BUSH) {
+                if (block.getType() == Material.SWEET_BERRY_BUSH || block.getType() == Material.GLOW_BERRIES) {
                     event.setCancelled(true);
                 } else if (this.flowerpots.contains(block.getType()) && event.getAction() == Action.RIGHT_CLICK_BLOCK) {
                     event.setCancelled(true);

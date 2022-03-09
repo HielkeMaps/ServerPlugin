@@ -21,6 +21,7 @@ public class Spectate {
                 p.setGameMode(GameMode.ADVENTURE);
                 p.removeScoreboardTag("joined");
             } else {
+                p.removeScoreboardTag("ingame");
                 p.setGameMode(GameMode.SPECTATOR);
             }
 
@@ -40,6 +41,8 @@ public class Spectate {
             if (target.getGameMode().equals(GameMode.SPECTATOR)) {
                 CommandAPI.fail("Player must not be in spectator mode");
             }
+
+            p.removeScoreboardTag("ingame");
 
             if (!p.getGameMode().equals(GameMode.SPECTATOR)) {
                 p.setGameMode(GameMode.SPECTATOR);
