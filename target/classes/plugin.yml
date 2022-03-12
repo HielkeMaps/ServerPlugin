@@ -1,6 +1,6 @@
 name: ServerPlugin
 main: io.github.hielkemaps.serverplugin.Main
-version: 1.0.0
+version: 1.0.1
 author: Hielke
-api-version: 1.17
+api-version: 1.18
 depend: [CommandAPI]

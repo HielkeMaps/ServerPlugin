@@ -6,4 +6,5 @@ io\github\hielkemaps\serverplugin\commands\Spectate.class
 io\github\hielkemaps\serverplugin\Main.class
 io\github\hielkemaps\serverplugin\objects\ScorePair.class
 io\github\hielkemaps\serverplugin\events\EventListener.class
+io\github\hielkemaps\serverplugin\commands\ReloadConfig.class
 io\github\hielkemaps\serverplugin\commands\Tpa.class

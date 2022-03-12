@@ -3,10 +3,8 @@ package io.github.hielkemaps.serverplugin;
 import dev.jorel.commandapi.CommandAPI;
 import io.github.hielkemaps.serverplugin.commands.*;
 import io.github.hielkemaps.serverplugin.events.EventListener;
-import io.github.hielkemaps.serverplugin.wrapper.PlayerManager;
-import io.github.hielkemaps.serverplugin.wrapper.PlayerWrapper;
 import org.bukkit.Bukkit;
-import org.bukkit.Server;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -75,7 +73,7 @@ public class Main extends JavaPlugin {
             }
 
             if (tags.contains(TAG_DISABLE_FLIGHT)) {
-                player.setAllowFlight(false);
+                if(player.getGameMode() != GameMode.CREATIVE) player.setAllowFlight(false);
                 player.removeScoreboardTag(TAG_DISABLE_FLIGHT);
             }
         }
