@@ -1,7 +1,5 @@
 package io.github.hielkemaps.serverplugin.objects;
 
-import org.jetbrains.annotations.NotNull;
-
 public class ScorePair implements Comparable<ScorePair> {
 
     private String name;
@@ -43,7 +41,7 @@ public class ScorePair implements Comparable<ScorePair> {
     }
 
     @Override
-    public int compareTo(@NotNull ScorePair o) {
+    public int compareTo(ScorePair o) {
         return Integer.compare(getScore(), o.getScore());
     }
 }

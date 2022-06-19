@@ -2,8 +2,7 @@ package io.github.hielkemaps.serverplugin.commands;
 
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.arguments.EntitySelectorArgument;
-import dev.jorel.commandapi.arguments.EntitySelectorArgument.EntitySelector;
+import dev.jorel.commandapi.arguments.PlayerArgument;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.OfflinePlayer;
@@ -14,7 +13,7 @@ public class Spectate {
         CommandAPI.unregister("spectate", true);
         (new CommandAPICommand("spectate")).executesPlayer((p, args) -> {
             if (p.getScoreboardTags().contains("inRace")) {
-                CommandAPI.fail("You can't use this command while in a race");
+                throw CommandAPI.fail("You can't use this command while in a race");
             }
 
             if (p.getGameMode() == GameMode.SPECTATOR) {
@@ -26,20 +25,22 @@ public class Spectate {
             }
 
         }).register();
-        (new CommandAPICommand("spectate")).withArguments((new EntitySelectorArgument("player", EntitySelector.ONE_PLAYER))
-                .replaceSuggestions((info) -> Bukkit.getOnlinePlayers().stream().filter((player) -> !player.getGameMode().equals(GameMode.SPECTATOR) && !info.sender().getName().equals(player.getName())).map(OfflinePlayer::getName).toArray(String[]::new)))
+        (new CommandAPICommand("spectate"))
+                .withArguments(new PlayerArgument("player").replaceSuggestions(info ->
+                        Bukkit.getOnlinePlayers().stream().filter(player -> !player.getGameMode().equals(GameMode.SPECTATOR) && !info.sender().getName().equals(player.getName())).map(OfflinePlayer::getName).toArray(String[]::new))
+                )
                 .executesPlayer((p, args) -> {
             Player target = (Player)args[0];
             if (p.getScoreboardTags().contains("inRace")) {
-                CommandAPI.fail("You can't use this command while in a race");
+                throw CommandAPI.fail("You can't use this command while in a race");
             }
 
             if (target.getUniqueId().equals(p.getUniqueId())) {
-                CommandAPI.fail("Cannot spectate yourself");
+                throw CommandAPI.fail("Cannot spectate yourself");
             }
 
             if (target.getGameMode().equals(GameMode.SPECTATOR)) {
-                CommandAPI.fail("Player must not be in spectator mode");
+                throw CommandAPI.fail("Player must not be in spectator mode");
             }
 
             p.removeScoreboardTag("ingame");

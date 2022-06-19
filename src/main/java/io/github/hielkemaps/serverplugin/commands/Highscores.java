@@ -17,7 +17,7 @@ import java.util.Set;
 public class Highscores {
     public Highscores() {
         (new CommandAPICommand("highscores"))
-                .withPermission(CommandPermission.OP)
+                .withPermission(CommandPermission.fromString("serverplugin.command.highscores"))
                 .withArguments(new IntegerArgument("count"))
                 .executesPlayer((p, args) -> {
 
@@ -48,19 +48,16 @@ public class Highscores {
         Objective pbObjective = scoreboard.getObjective("time_pb");
         if (pbObjective == null) return null;
 
-        int i = 0;
         Set<String> entries = scoreboard.getEntries();
         for (String entry : entries) {
-            if(i == maxCount) break;
 
             int score = pbObjective.getScore(entry).getScore();
             if (score == 0 || score == 2147483647) continue; //we don't want empty scores
             list.add(new ScorePair(entry,score));
-            i++;
         }
 
         Collections.sort(list);
-
+        list.subList(maxCount, list.size()).clear();
         return list;
     }
 }
