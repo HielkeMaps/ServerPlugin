@@ -102,7 +102,7 @@ public class PlayerWrapper {
 
         if (player != null) {
             if (this.visibilityOption == option) {
-                player.sendMessage(ChatColor.RED + "You are already " + option.toString().toLowerCase() + "!");
+                player.sendMessage(ChatColor.RED + "Players are already set to " + option.toString().toLowerCase() + "!");
                 return;
             }
 

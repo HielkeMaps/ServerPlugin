@@ -7,7 +7,7 @@ import io.github.hielkemaps.serverplugin.wrapper.PlayerManager;
 public class PlayerVisibility {
 
     public PlayerVisibility() {
-        new CommandAPICommand("player_visibliity")
+        new CommandAPICommand("player_visibility")
                 .withAliases("playervisibility", "pv")
 
                 .withSubcommand(new CommandAPICommand("visible")

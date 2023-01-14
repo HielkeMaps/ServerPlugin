@@ -2,7 +2,11 @@ package io.github.hielkemaps.serverplugin.events;
 
 import dev.jorel.commandapi.CommandAPI;
 import io.github.hielkemaps.serverplugin.Main;
+import io.github.hielkemaps.serverplugin.PlayerVisibilityOption;
 import io.github.hielkemaps.serverplugin.wrapper.PlayerManager;
+import io.github.hielkemaps.serverplugin.wrapper.PlayerWrapper;
+import java.util.Collection;
+import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -57,6 +61,33 @@ public class EventListener implements Listener {
             if (onlinePlayers.size() > 1) {
                 Main.moreThanOnePlayer = true;
                 onlinePlayers.forEach(CommandAPI::updateRequirements);
+            }
+        }
+
+        e.setJoinMessage(null);
+        Bukkit.broadcastMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "+" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY + e.getPlayer().getDisplayName());
+
+        PlayerWrapper player = PlayerManager.getPlayer(e.getPlayer().getUniqueId());
+
+        for (Player other : Bukkit.getOnlinePlayers()) {
+            if (!other.getUniqueId().equals(e.getPlayer().getUniqueId())) {
+                PlayerWrapper wrapper = PlayerManager.getPlayer(other.getUniqueId());
+
+                // If the other player has players invisible, hide the new player
+                if (wrapper.getVisibilityOption() == PlayerVisibilityOption.INVISIBLE) {
+                    other.hidePlayer(Main.getInstance(), e.getPlayer());
+                } else {
+                    other.showPlayer(Main.getInstance(), e.getPlayer());
+                }
+
+                // If the new player has players invisible, hide the other player
+                if (player.getVisibilityOption() == PlayerVisibilityOption.INVISIBLE) {
+                    e.getPlayer().hidePlayer(Main.getInstance(), other);
+                } else {
+                    e.getPlayer().showPlayer(Main.getInstance(), other);
+                }
+
+                // Don't need to handle ghost players here, as it is handled by the PacketListener
             }
         }
     }
