@@ -2,6 +2,7 @@ package io.github.hielkemaps.serverplugin.commands;
 
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.PlayerArgument;
 import io.github.hielkemaps.serverplugin.Main;
 import io.github.hielkemaps.serverplugin.wrapper.PlayerManager;
@@ -24,15 +25,15 @@ public class Tpa {
 
     public Tpa() {
         (new CommandAPICommand("tpa")).withRequirement(this.othersOnline).withArguments((new PlayerArgument("player"))
-                .replaceSuggestions((info) -> Bukkit.getOnlinePlayers().stream().map(OfflinePlayer::getName).filter((name) -> !info.sender().getName().equals(name)).toArray(String[]::new)))
+                .replaceSuggestions(ArgumentSuggestions.strings((info) -> Bukkit.getOnlinePlayers().stream().map(OfflinePlayer::getName).filter((name) -> !info.sender().getName().equals(name)).toArray(String[]::new))))
                 .executesPlayer((p, args) -> {
-            Player target = (Player)args[0];
+            Player target = (Player)args.get("player");
             if (p.getScoreboardTags().contains("inRace")) {
-                CommandAPI.fail("You can't use this command while in a race");
+                throw CommandAPI.failWithString("You can't use this command while in a race");
             }
 
             if (target.getUniqueId().equals(p.getUniqueId())) {
-                CommandAPI.fail("You can't tpa to yourself silly!");
+                throw CommandAPI.failWithString("You can't tpa to yourself silly!");
             } else if (PlayerManager.getPlayer(target.getUniqueId()).addIncoming(p.getUniqueId())) {
                 TextComponent msg = new TextComponent(ChatColor.GOLD + "" + ChatColor.BOLD + p.getDisplayName() + ChatColor.RESET + ChatColor.YELLOW + " wants to teleport to you! Use ");
                 TextComponent accept = new TextComponent(ChatColor.GOLD + "/tpaccept");
@@ -46,12 +47,12 @@ public class Tpa {
                 p.sendMessage(ChatColor.YELLOW + "Teleport request sent to " + ChatColor.GOLD + target.getDisplayName());
                 target.playSound(target.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, SoundCategory.MASTER, 1.0F, 1.0F);
             } else {
-                CommandAPI.fail("You can only send one request");
+                throw CommandAPI.failWithString("You can only send one request");
             }
         }).register();
         (new CommandAPICommand("tpaccept")).withRequirement(this.hasInvites).executesPlayer((p, args) -> {
             if (p.getScoreboardTags().contains("inRace")) {
-                CommandAPI.fail("You can't use this command while in a race");
+                CommandAPI.failWithString("You can't use this command while in a race");
             }
 
             PlayerWrapper player = PlayerManager.getPlayer(p.getUniqueId());

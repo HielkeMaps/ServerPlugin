@@ -21,7 +21,7 @@ public class Highscores {
                 .withArguments(new IntegerArgument("count"))
                 .executesPlayer((p, args) -> {
 
-                    int count = (int) args[0];
+                    int count = (int) args.get("count");
 
                     List<ScorePair> highscores = getHighScores(count);
 

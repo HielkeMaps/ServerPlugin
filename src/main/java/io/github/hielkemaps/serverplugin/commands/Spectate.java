@@ -2,6 +2,7 @@ package io.github.hielkemaps.serverplugin.commands;
 
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.PlayerArgument;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -13,7 +14,7 @@ public class Spectate {
         CommandAPI.unregister("spectate", true);
         (new CommandAPICommand("spectate")).executesPlayer((p, args) -> {
             if (p.getScoreboardTags().contains("inRace")) {
-                throw CommandAPI.fail("You can't use this command while in a race");
+                throw CommandAPI.failWithString("You can't use this command while in a race");
             }
 
             if (p.getGameMode() == GameMode.SPECTATOR) {
@@ -26,21 +27,21 @@ public class Spectate {
 
         }).register();
         (new CommandAPICommand("spectate"))
-                .withArguments(new PlayerArgument("player").replaceSuggestions(info ->
-                        Bukkit.getOnlinePlayers().stream().filter(player -> !player.getGameMode().equals(GameMode.SPECTATOR) && !info.sender().getName().equals(player.getName())).map(OfflinePlayer::getName).toArray(String[]::new))
+                .withArguments(new PlayerArgument("player").replaceSuggestions(ArgumentSuggestions.strings(info ->
+                        Bukkit.getOnlinePlayers().stream().filter(player -> !player.getGameMode().equals(GameMode.SPECTATOR) && !info.sender().getName().equals(player.getName())).map(OfflinePlayer::getName).toArray(String[]::new)))
                 )
                 .executesPlayer((p, args) -> {
-            Player target = (Player)args[0];
+            Player target = (Player)args.get("player");
             if (p.getScoreboardTags().contains("inRace")) {
-                throw CommandAPI.fail("You can't use this command while in a race");
+                throw CommandAPI.failWithString("You can't use this command while in a race");
             }
 
             if (target.getUniqueId().equals(p.getUniqueId())) {
-                throw CommandAPI.fail("Cannot spectate yourself");
+                throw CommandAPI.failWithString("Cannot spectate yourself");
             }
 
             if (target.getGameMode().equals(GameMode.SPECTATOR)) {
-                throw CommandAPI.fail("Player must not be in spectator mode");
+                throw CommandAPI.failWithString("Player must not be in spectator mode");
             }
 
             p.removeScoreboardTag("ingame");

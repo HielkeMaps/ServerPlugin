@@ -6,7 +6,7 @@
 
     <groupId>io.github.hielkemaps</groupId>
     <artifactId>ServerPlugin</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
     <build>
         <plugins>
             <plugin>
@@ -29,8 +29,8 @@
         </dependency>
         <dependency>
             <groupId>dev.jorel</groupId>
-            <artifactId>commandapi-core</artifactId>
-            <version>8.4.0</version>
+            <artifactId>commandapi-bukkit-core</artifactId>
+            <version>9.0.3</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
