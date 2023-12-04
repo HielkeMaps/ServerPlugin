@@ -12,6 +12,7 @@ public class PlayerWrapper {
     private final UUID uuid;
     private final Set<UUID> incoming = new HashSet<>();
     private final Set<UUID> outgoing = new HashSet<>();
+    private boolean getCoins = true;
 
     public PlayerWrapper(UUID uuid) {
         this.uuid = uuid;
@@ -32,6 +33,14 @@ public class PlayerWrapper {
         this.updateRequirements();
     }
 
+    public boolean shouldGetCoins() {
+        return this.getCoins;
+    }
+
+    public void setGetCoins(boolean getCoins) {
+        this.getCoins = getCoins;
+    }
+
     public boolean hasIncoming() {
         return !this.incoming.isEmpty();
     }
@@ -47,6 +56,11 @@ public class PlayerWrapper {
 
     public void addOutGoing(UUID uuid) {
         this.outgoing.add(uuid);
+    }
+
+    public void afterTeleport(UUID uuid) {
+        this.removeOutgoing(uuid);
+        this.getCoins = false;
     }
 
     public void removeOutgoing(UUID uuid) {

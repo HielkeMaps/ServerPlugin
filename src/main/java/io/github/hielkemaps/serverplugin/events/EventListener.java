@@ -3,10 +3,9 @@ package io.github.hielkemaps.serverplugin.events;
 import dev.jorel.commandapi.CommandAPI;
 import io.github.hielkemaps.serverplugin.Main;
 import io.github.hielkemaps.serverplugin.wrapper.PlayerManager;
-import java.util.Collection;
-import java.util.Set;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -18,6 +17,9 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+
+import java.util.Collection;
+import java.util.Set;
 
 public class EventListener implements Listener {
     Set<Material> flowerpots;
@@ -60,8 +62,8 @@ public class EventListener implements Listener {
             }
         }
 
-        e.setJoinMessage(null);
-        Bukkit.broadcastMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "+" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY + e.getPlayer().getDisplayName());
+        e.joinMessage(null);
+        Bukkit.broadcast(Component.text(NamedTextColor.DARK_GRAY + "[" + NamedTextColor.GREEN + "+" + NamedTextColor.DARK_GRAY + "] " + NamedTextColor.GRAY + e.getPlayer().displayName()));
     }
 
     @EventHandler
@@ -75,12 +77,13 @@ public class EventListener implements Listener {
         }
 
         Player p = e.getPlayer();
+
         if (p.isInsideVehicle()) {
             p.getVehicle().eject();
         }
 
         PlayerManager.getPlayer(p.getUniqueId()).clearOutgoing();
-        e.setQuitMessage(null);
-        Bukkit.broadcastMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "-" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY + p.getDisplayName());
+        e.quitMessage(null);
+        Bukkit.broadcast(Component.text(NamedTextColor.DARK_GRAY + "[" + NamedTextColor.RED + "-" + NamedTextColor.DARK_GRAY + "] " + NamedTextColor.GRAY + p.displayName()));
     }
 }

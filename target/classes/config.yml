@@ -1,3 +1,5 @@
 # commands that can be disabled:
 # hub, spectate, tpa, highscores
 disabled-commands: []
+points-given: 10
+points-bonus: 5

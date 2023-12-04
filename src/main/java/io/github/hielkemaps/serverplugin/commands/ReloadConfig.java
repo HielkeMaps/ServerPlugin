@@ -13,7 +13,7 @@ public class ReloadConfig {
                         .executes(((commandSender, objects) -> {
 
                             Main.getInstance().reloadConfig();
-                            Main.updateCommands();
+                            Main.loadConfig();
                             commandSender.sendMessage("Reloaded config!");
                         }))
                 ).register();

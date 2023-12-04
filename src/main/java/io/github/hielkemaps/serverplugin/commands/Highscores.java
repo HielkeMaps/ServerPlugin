@@ -42,8 +42,6 @@ public class Highscores {
         List<ScorePair> list = new ArrayList<>();
 
         ScoreboardManager manager = Bukkit.getScoreboardManager();
-        if (manager == null) return null;
-
         Scoreboard scoreboard = manager.getMainScoreboard();
         Objective pbObjective = scoreboard.getObjective("time_pb");
         if (pbObjective == null) return null;
