@@ -3,8 +3,6 @@ package io.github.hielkemaps.serverplugin.events;
 import dev.jorel.commandapi.CommandAPI;
 import io.github.hielkemaps.serverplugin.Main;
 import io.github.hielkemaps.serverplugin.wrapper.PlayerManager;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -61,9 +59,6 @@ public class EventListener implements Listener {
                 onlinePlayers.forEach(CommandAPI::updateRequirements);
             }
         }
-
-        e.joinMessage(null);
-        Bukkit.broadcast(Component.text(NamedTextColor.DARK_GRAY + "[" + NamedTextColor.GREEN + "+" + NamedTextColor.DARK_GRAY + "] " + NamedTextColor.GRAY + e.getPlayer().displayName()));
     }
 
     @EventHandler
@@ -77,13 +72,10 @@ public class EventListener implements Listener {
         }
 
         Player p = e.getPlayer();
-
         if (p.isInsideVehicle()) {
             p.getVehicle().eject();
         }
 
         PlayerManager.getPlayer(p.getUniqueId()).clearOutgoing();
-        e.quitMessage(null);
-        Bukkit.broadcast(Component.text(NamedTextColor.DARK_GRAY + "[" + NamedTextColor.RED + "-" + NamedTextColor.DARK_GRAY + "] " + NamedTextColor.GRAY + p.displayName()));
     }
 }
