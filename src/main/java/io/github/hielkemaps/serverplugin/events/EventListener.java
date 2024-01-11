@@ -20,9 +20,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.Collection;
-import java.util.Set;
-
 public class EventListener implements Listener {
     Set<Material> flowerpots;
 
@@ -63,9 +60,6 @@ public class EventListener implements Listener {
                 onlinePlayers.forEach(CommandAPI::updateRequirements);
             }
         }
-
-        e.setJoinMessage(null);
-        Bukkit.broadcastMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "+" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY + e.getPlayer().getDisplayName());
 
         PlayerWrapper player = PlayerManager.getPlayer(e.getPlayer().getUniqueId());
 
