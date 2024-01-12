@@ -1,5 +1,6 @@
 package io.github.hielkemaps.serverplugin;
 
+import com.comphenix.protocol.ProtocolLibrary;
 import dev.jorel.commandapi.CommandAPI;
 import io.github.hielkemaps.serverplugin.commands.*;
 import io.github.hielkemaps.serverplugin.events.EventListener;
@@ -9,6 +10,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.black_ixx.playerpoints.PlayerPoints;
 import org.black_ixx.playerpoints.PlayerPointsAPI;
+import io.github.hielkemaps.serverplugin.events.PacketListener;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Sound;
@@ -56,6 +58,8 @@ public class Main extends JavaPlugin {
         pointsAPI = PlayerPoints.getInstance().getAPI();
 
         loadConfig();
+
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketListener(this));
     }
 
     public static void loadConfig() {
@@ -76,6 +80,9 @@ public class Main extends JavaPlugin {
 
         if (!disabledCommands.contains("highscores")) new Highscores();
         else CommandAPI.unregister("highscores");
+
+        if(!disabledCommands.contains("player_visibility")) new PlayerVisibility();
+        else CommandAPI.unregister("player_visibility");
 
         Bukkit.getOnlinePlayers().forEach(CommandAPI::updateRequirements);
     }
