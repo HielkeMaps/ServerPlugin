@@ -8,6 +8,7 @@ io\github\hielkemaps\serverplugin\objects\ScorePair.class
 io\github\hielkemaps\serverplugin\events\EventListener.class
 io\github\hielkemaps\serverplugin\commands\Tpa.class
 io\github\hielkemaps\serverplugin\PlayerVisibilityOption.class
+io\github\hielkemaps\serverplugin\wrapper\PlayerWrapper$1.class
 io\github\hielkemaps\serverplugin\commands\Hub.class
 io\github\hielkemaps\serverplugin\commands\PlayerVisibility.class
 io\github\hielkemaps\serverplugin\Main.class

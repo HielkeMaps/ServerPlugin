@@ -1,10 +1,15 @@
 package io.github.hielkemaps.serverplugin.wrapper;
 
 import com.comphenix.packetwrapper.WrapperPlayServerEntityMetadata;
+import com.comphenix.protocol.wrappers.WrappedDataValue;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.google.common.collect.Lists;
 import dev.jorel.commandapi.CommandAPI;
 import io.github.hielkemaps.serverplugin.Main;
 import io.github.hielkemaps.serverplugin.PlayerVisibilityOption;
+import java.util.List;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -102,56 +107,46 @@ public class PlayerWrapper {
 
         if (player != null) {
             if (this.visibilityOption == option) {
-                player.sendMessage(ChatColor.RED + "Players are already set to " + option.toString().toLowerCase() + "!");
+                player.sendMessage(Component.text("Players are already set to " + option.toString().toLowerCase() + "!").color(TextColor.fromHexString("#FF0000")));
                 return;
             }
 
             this.visibilityOption = option;
 
-            if (option == PlayerVisibilityOption.VISIBLE) {
-                player.sendMessage(ChatColor.GRAY + "Players are now visible");
+            switch (option) {
+                case VISIBLE -> {
+                    List<WrappedDataValue> data = Lists.newArrayList(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0));
 
-                WrappedDataWatcher watcher = new WrappedDataWatcher();
-                WrappedDataWatcher.Serializer serializer = WrappedDataWatcher.Registry.get(Byte.class);
-                watcher.setEntity(player);
-                watcher.setObject(0, serializer, (byte) 0x0);
+                    for (Player other : Bukkit.getOnlinePlayers()) {
+                        if (!other.getUniqueId().equals(uuid)) {
+                            player.showPlayer(Main.getInstance(), other);
 
-                for (Player other : Bukkit.getOnlinePlayers()) {
-                    if (!uuid.equals(other.getUniqueId())) {
-                        player.showPlayer(Main.getInstance(), other);
-
-                        WrapperPlayServerEntityMetadata packet = new WrapperPlayServerEntityMetadata();
-                        packet.setMetadata(watcher.getWatchableObjects());
-
-                        packet.setEntityID(other.getEntityId());
-                        packet.sendPacket(player);
+                            WrapperPlayServerEntityMetadata packet = new WrapperPlayServerEntityMetadata();
+                            packet.setEntityID(other.getEntityId());
+                            packet.setMetadata(data);
+                            packet.sendPacket(player);
+                        }
                     }
                 }
-            } else if (option == PlayerVisibilityOption.INVISIBLE) {
-                player.sendMessage(ChatColor.GRAY + "Players are now invisible");
+                case GHOST -> {
+                    List<WrappedDataValue> data = Lists.newArrayList(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), (byte) 20));
 
-                for (Player other : Bukkit.getOnlinePlayers()) {
-                    if (!uuid.equals(other.getUniqueId())) {
-                        player.hidePlayer(Main.getInstance(), other);
+                    for (Player other : Bukkit.getOnlinePlayers()) {
+                        if (!other.getUniqueId().equals(uuid)) {
+                            player.showPlayer(Main.getInstance(), other);
+
+                            WrapperPlayServerEntityMetadata packet = new WrapperPlayServerEntityMetadata();
+                            packet.setEntityID(other.getEntityId());
+                            packet.setMetadata(data);
+                            packet.sendPacket(player);
+                        }
                     }
                 }
-            } else if (option == PlayerVisibilityOption.GHOST) {
-                player.sendMessage(ChatColor.GRAY + "Players are now semi-transparent");
-
-                WrappedDataWatcher watcher = new WrappedDataWatcher();
-                WrappedDataWatcher.Serializer serializer = WrappedDataWatcher.Registry.get(Byte.class);
-                watcher.setEntity(player);
-                watcher.setObject(0, serializer, (byte) 0x20);
-
-                for (Player other : Bukkit.getOnlinePlayers()) {
-                    if (!uuid.equals(other.getUniqueId())) {
-                        player.showPlayer(Main.getInstance(), other);
-
-                        WrapperPlayServerEntityMetadata packet = new WrapperPlayServerEntityMetadata();
-                        packet.setMetadata(watcher.getWatchableObjects());
-
-                        packet.setEntityID(other.getEntityId());
-                        packet.sendPacket(player);
+                case INVISIBLE -> {
+                    for (Player other : Bukkit.getOnlinePlayers()) {
+                        if (!other.getUniqueId().equals(uuid)) {
+                            player.hidePlayer(Main.getInstance(), other);
+                        }
                     }
                 }
             }

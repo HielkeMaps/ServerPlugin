@@ -21,7 +21,7 @@ package com.comphenix.packetwrapper;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.wrappers.WrappedWatchableObject;
+import com.comphenix.protocol.wrappers.WrappedDataValue;
 import java.util.List;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -43,7 +43,7 @@ public class WrapperPlayServerEntityMetadata extends AbstractPacket {
 	 * Retrieve Entity ID.
 	 * <p>
 	 * Notes: entity's ID
-	 * 
+	 *
 	 * @return The current Entity ID
 	 */
 	public int getEntityID() {
@@ -52,7 +52,7 @@ public class WrapperPlayServerEntityMetadata extends AbstractPacket {
 
 	/**
 	 * Set Entity ID.
-	 * 
+	 *
 	 * @param value - new value.
 	 */
 	public void setEntityID(int value) {
@@ -61,7 +61,7 @@ public class WrapperPlayServerEntityMetadata extends AbstractPacket {
 
 	/**
 	 * Retrieve the entity of the painting that will be spawned.
-	 * 
+	 *
 	 * @param world - the current world of the entity.
 	 * @return The spawned entity.
 	 */
@@ -71,7 +71,7 @@ public class WrapperPlayServerEntityMetadata extends AbstractPacket {
 
 	/**
 	 * Retrieve the entity of the painting that will be spawned.
-	 * 
+	 *
 	 * @param event - the packet event.
 	 * @return The spawned entity.
 	 */
@@ -81,19 +81,19 @@ public class WrapperPlayServerEntityMetadata extends AbstractPacket {
 
 	/**
 	 * Retrieve Metadata.
-	 * 
+	 *
 	 * @return The current Metadata
 	 */
-	public List<WrappedWatchableObject> getMetadata() {
-		return handle.getWatchableCollectionModifier().read(0);
+	public List<WrappedDataValue> getMetadata() {
+		return handle.getDataValueCollectionModifier().read(0);
 	}
 
 	/**
 	 * Set Metadata.
-	 * 
+	 *
 	 * @param value - new value.
 	 */
-	public void setMetadata(List<WrappedWatchableObject> value) {
-		handle.getWatchableCollectionModifier().write(0, value);
+	public void setMetadata(List<WrappedDataValue> value) {
+		handle.getDataValueCollectionModifier().write(0, value);
 	}
 }

@@ -4,8 +4,10 @@ import com.comphenix.packetwrapper.WrapperPlayServerEntityMetadata;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.wrappers.WrappedDataValue;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
+import com.google.common.collect.Lists;
 import io.github.hielkemaps.serverplugin.PlayerVisibilityOption;
 import io.github.hielkemaps.serverplugin.wrapper.PlayerManager;
 import io.github.hielkemaps.serverplugin.wrapper.PlayerWrapper;
@@ -26,19 +28,19 @@ public class PacketListener extends PacketAdapter {
         WrapperPlayServerEntityMetadata packet = new WrapperPlayServerEntityMetadata(event.getPacket());
         Entity entity = packet.getEntity(event);
 
+        // Check if the entity is a player and if it is not the player that is sending the packet
         if (entity instanceof Player) {
             if (!entity.getUniqueId().equals(event.getPlayer().getUniqueId())) {
-                for (WrappedWatchableObject watchedObject : packet.getMetadata()) {
+                for (WrappedDataValue watchedObject : packet.getMetadata()) {
+
+                    // Index 0 is the bitmask that contains the visibility flag (0x20)
                     if (watchedObject.getIndex() == 0) {
                         if (player.getVisibilityOption() == PlayerVisibilityOption.GHOST) {
                             if (((byte) watchedObject.getValue() & 0x20) != 0x20) {
-                                WrappedDataWatcher watcher = new WrappedDataWatcher();
-                                WrappedDataWatcher.Serializer serializer = WrappedDataWatcher.Registry.get(Byte.class);
-                                watcher.setEntity(event.getPlayer());
-                                watcher.setObject(0, serializer, (byte) ((byte) watchedObject.getRawValue() | 0x20));
-
                                 WrapperPlayServerEntityMetadata newPacket = new WrapperPlayServerEntityMetadata();
-                                newPacket.setMetadata(watcher.getWatchableObjects());
+                                newPacket.setMetadata(Lists.newArrayList(
+                                        new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), (byte) ((byte) watchedObject.getRawValue() | 0x20))
+                                ));
 
                                 newPacket.setEntityID(packet.getEntityID());
                                 newPacket.sendPacket(event.getPlayer());
@@ -47,14 +49,10 @@ public class PacketListener extends PacketAdapter {
                             }
                         } else {
                             if (((byte) watchedObject.getRawValue() & 0x20) == 0x20) {
-
-                                WrappedDataWatcher watcher = new WrappedDataWatcher();
-                                WrappedDataWatcher.Serializer serializer = WrappedDataWatcher.Registry.get(Byte.class);
-                                watcher.setEntity(event.getPlayer());
-                                watcher.setObject(0, serializer, (byte) ((byte) watchedObject.getRawValue() & (0xFF - 0x20)));
-
                                 WrapperPlayServerEntityMetadata newPacket = new WrapperPlayServerEntityMetadata();
-                                newPacket.setMetadata(watcher.getWatchableObjects());
+                                newPacket.setMetadata(Lists.newArrayList(
+                                        new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), (byte) ((byte) watchedObject.getRawValue() & (0xFF - 0x20)))
+                                ));
 
                                 newPacket.setEntityID(packet.getEntityID());
                                 newPacket.sendPacket(event.getPlayer());
@@ -62,6 +60,8 @@ public class PacketListener extends PacketAdapter {
                                 event.setCancelled(true);
                             }
                         }
+
+                        return;
                     }
                 }
             }
