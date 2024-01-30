@@ -124,7 +124,7 @@ public class Main extends JavaPlugin {
                         int addedCoins = pointsGiven;
 
                         //Reward for S rank
-                        if(player.getScoreboardTags().contains("rank_s")){
+                        if (player.getScoreboardTags().contains("rank_s")) {
                             addedCoins += pointsBonus;
                         }
 
@@ -143,7 +143,7 @@ public class Main extends JavaPlugin {
                     }
                 }
 
-                if(currentTeam.equals("main")){
+                if (currentTeam.equals("main")) {
                     PlayerManager.getPlayer(playerUUID).setGetCoins(true);
                 }
             }
