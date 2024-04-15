@@ -77,6 +77,9 @@ public class Main extends JavaPlugin {
         if (!disabledCommands.contains("highscores")) new Highscores();
         else CommandAPI.unregister("highscores");
 
+        if (!disabledCommands.contains("localtime")) new LocalTime();
+        else CommandAPI.unregister("localtime");
+
         Bukkit.getOnlinePlayers().forEach(CommandAPI::updateRequirements);
     }
 
