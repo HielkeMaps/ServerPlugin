@@ -4,6 +4,7 @@ import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.PlayerArgument;
+import io.github.hielkemaps.serverplugin.wrapper.PlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.OfflinePlayer;
@@ -20,11 +21,12 @@ public class Spectate {
             if (p.getGameMode() == GameMode.SPECTATOR) {
                 p.setGameMode(GameMode.ADVENTURE);
                 p.removeScoreboardTag("joined");
-            } else {
-                p.removeScoreboardTag("ingame");
-                p.setGameMode(GameMode.SPECTATOR);
+                PlayerManager.getPlayer(p.getUniqueId()).setGetCoins(true);
+                return;
             }
-
+            p.removeScoreboardTag("ingame");
+            p.setGameMode(GameMode.SPECTATOR);
+            PlayerManager.getPlayer(p.getUniqueId()).setGetCoins(false);
         }).register();
         (new CommandAPICommand("spectate"))
                 .withArguments(new PlayerArgument("player").replaceSuggestions(ArgumentSuggestions.strings(info ->
@@ -45,6 +47,7 @@ public class Spectate {
             }
 
             p.removeScoreboardTag("ingame");
+            PlayerManager.getPlayer(p.getUniqueId()).setGetCoins(false);
 
             if (!p.getGameMode().equals(GameMode.SPECTATOR)) {
                 p.setGameMode(GameMode.SPECTATOR);
