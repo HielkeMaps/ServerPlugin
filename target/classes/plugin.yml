@@ -1,6 +1,0 @@
-name: ServerPlugin
-main: io.github.hielkemaps.serverplugin.Main
-version: 1.1.0
-author: Hielke
-api-version: '1.20'
-depend: [CommandAPI,PlayerPoints]
