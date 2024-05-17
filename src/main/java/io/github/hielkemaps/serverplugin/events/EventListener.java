@@ -71,11 +71,12 @@ public class EventListener implements Listener {
             }
         }
 
-        Player p = e.getPlayer();
-        if (p.isInsideVehicle()) {
-            p.getVehicle().eject();
+        //Dismount entity
+        Player player = e.getPlayer();
+        if (player.isInsideVehicle() && player.getVehicle() != null) {
+            player.getVehicle().removePassenger(player);
         }
 
-        PlayerManager.getPlayer(p.getUniqueId()).clearOutgoing();
+        PlayerManager.getPlayer(player.getUniqueId()).clearOutgoing();
     }
 }

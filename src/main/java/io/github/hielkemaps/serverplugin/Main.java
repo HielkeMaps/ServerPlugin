@@ -21,7 +21,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
 
 import java.util.*;
 
@@ -32,7 +31,7 @@ public class Main extends JavaPlugin {
     public static boolean moreThanOnePlayer = false;
 
     public static Scoreboard scoreboard;
-    public static Map<UUID, String> teams = new HashMap<>();
+    public static Set<UUID> finishedPlayers = new HashSet<>();
     public static int pointsGiven;
     public static int pointsBonus;
 
@@ -117,104 +116,103 @@ public class Main extends JavaPlugin {
 
             if (player.getScoreboardTags().contains("training_mode")) continue;
 
-            Team team = scoreboard.getEntityTeam(player);
-            if (team == null) continue;
-
             UUID playerUUID = player.getUniqueId();
-            String currentTeam = team.getName();
-            String prevTeam = teams.get(playerUUID);
-            teams.put(playerUUID, currentTeam);
 
-            if (prevTeam != null && !currentTeam.equals(prevTeam)) {
-                if (currentTeam.equals("finished")) {
+            boolean isFinished = player.getScoreboardTags().contains("finished");
+            boolean prevFinished = finishedPlayers.contains(playerUUID);
 
-                    PlayerWrapper player1 = PlayerManager.getPlayer(playerUUID);
-                    if (player1.shouldGetCoins()) {
+            // From finished to not finished, reset
+            if(prevFinished && !isFinished){
+                PlayerManager.getPlayer(playerUUID).setGetCoins(true);
+                finishedPlayers.remove(playerUUID);
+            }
 
-                        int addedCoins = pointsGiven;
+            // From not finished to finished, reward
+            if (!prevFinished && isFinished) {
+                finishedPlayers.add(playerUUID);
 
-                        //Reward for S rank
-                        if (player.getScoreboardTags().contains("rank_s")) {
-                            addedCoins += pointsBonus;
-                        }
+                PlayerWrapper player1 = PlayerManager.getPlayer(playerUUID);
+                if (player1.shouldGetCoins()) {
 
-                        double multiplier = 1;
-                        String rank = null;
-                        int rankBonus = 0;
+                    int addedCoins = pointsGiven;
 
-                        User user = luckPermsAPI.getPlayerAdapter(Player.class).getUser(player);
-                        switch (user.getPrimaryGroup()) {
-                            case "owner" -> {
-                                multiplier = 2;
-                                rank = ":owner:";
-                            }
-                            case "admin" -> {
-                                multiplier = 2;
-                                rank = ":admin:";
-                            }
-                            case "builder" -> {
-                                multiplier = 1.25;
-                                rank = ":builder:";
-                            }
-                            case "moderator" -> {
-                                multiplier = 1.25;
-                                rank = ":mod:";
-                            }
-                            case "mvp" -> {
-                                multiplier = 2;
-                                rank = ":mvp:";
-                            }
-                            case "vip+" -> {
-                                multiplier = 1.5;
-                                rank = ":vipplus:";
-                            }
-                            case "vip" -> {
-                                multiplier = 1.25;
-                                rank = ":vip:";
-                            }
-                        }
-
-                        if (rank != null) {
-                            player.sendMessage(Component.text("-------------------------").decorate(TextDecoration.STRIKETHROUGH).color(TextColor.fromHexString("#555555")));
-                        }
-                        player.sendMessage(Component.text("You earned " + addedCoins + " Parcoins!").color(TextColor.fromHexString("#FFFFFC")));
-                        if (rank != null) {
-                            rankBonus = (int) Math.round((double) addedCoins * multiplier) - addedCoins;
-                            player.sendMessage(
-                                    Component.text(rank)
-                                            .append(Component.text(" bonus: ")
-                                                    .decorate(TextDecoration.BOLD)
-                                                    .append(Component.text(rankBonus + " Parcoins")
-                                                            .decoration(TextDecoration.BOLD, false)
-                                                    )
-                                            ));
-                            player.sendMessage(
-                                    Component.text("Total: ")
-                                            .decorate(TextDecoration.BOLD)
-                                            .color(TextColor.fromHexString("#FFAA00"))
-                                            .append(Component.text((addedCoins + rankBonus) + " Parcoins")
-                                                    .decoration(TextDecoration.BOLD, false)
-                                                    .color(TextColor.fromHexString("#FFFFFC"))
-                                            ));
-                            player.sendMessage(Component.text("-------------------------").decorate(TextDecoration.STRIKETHROUGH).color(TextColor.fromHexString("#555555")));
-                        }
-                        pointsAPI.give(playerUUID, (addedCoins + rankBonus));
-                        player.sendActionBar(Component.text("You earned " + (addedCoins + rankBonus) + " Parcoins!").color(TextColor.fromHexString("#FFFFFC")));
-                        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
-
-                        int finalAddedCoins = addedCoins + rankBonus;
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
-                            if (player.isOnline()) {
-                                player.sendActionBar(Component.text("You earned " + finalAddedCoins + " Parcoins!").color(TextColor.fromHexString("#FFFFFC")));
-                            }
-                        }, 40);
-                    } else {
-                        player.sendMessage(Component.text(":cancel: You did not receive any Parcoins because you used /tpa or /spectate :cancel:").color(TextColor.fromHexString("#FF0000")));
+                    //Reward for S rank
+                    if (player.getScoreboardTags().contains("rank_s")) {
+                        addedCoins += pointsBonus;
                     }
-                }
 
-                if (currentTeam.equals("main")) {
-                    PlayerManager.getPlayer(playerUUID).setGetCoins(true);
+                    double multiplier = 1;
+                    String rank = null;
+                    int rankBonus = 0;
+
+                    User user = luckPermsAPI.getPlayerAdapter(Player.class).getUser(player);
+                    switch (user.getPrimaryGroup()) {
+                        case "owner" -> {
+                            multiplier = 2;
+                            rank = ":owner:";
+                        }
+                        case "admin" -> {
+                            multiplier = 2;
+                            rank = ":admin:";
+                        }
+                        case "builder" -> {
+                            multiplier = 1.25;
+                            rank = ":builder:";
+                        }
+                        case "moderator" -> {
+                            multiplier = 1.25;
+                            rank = ":mod:";
+                        }
+                        case "mvp" -> {
+                            multiplier = 2;
+                            rank = ":mvp:";
+                        }
+                        case "vip+" -> {
+                            multiplier = 1.5;
+                            rank = ":vipplus:";
+                        }
+                        case "vip" -> {
+                            multiplier = 1.25;
+                            rank = ":vip:";
+                        }
+                    }
+
+                    if (rank != null) {
+                        player.sendMessage(Component.text("-------------------------").decorate(TextDecoration.STRIKETHROUGH).color(TextColor.fromHexString("#555555")));
+                    }
+                    player.sendMessage(Component.text("You earned " + addedCoins + " Parcoins!").color(TextColor.fromHexString("#FFFFFC")));
+                    if (rank != null) {
+                        rankBonus = (int) Math.round((double) addedCoins * multiplier) - addedCoins;
+                        player.sendMessage(
+                                Component.text(rank)
+                                        .append(Component.text(" bonus: ")
+                                                .decorate(TextDecoration.BOLD)
+                                                .append(Component.text(rankBonus + " Parcoins")
+                                                        .decoration(TextDecoration.BOLD, false)
+                                                )
+                                        ));
+                        player.sendMessage(
+                                Component.text("Total: ")
+                                        .decorate(TextDecoration.BOLD)
+                                        .color(TextColor.fromHexString("#FFAA00"))
+                                        .append(Component.text((addedCoins + rankBonus) + " Parcoins")
+                                                .decoration(TextDecoration.BOLD, false)
+                                                .color(TextColor.fromHexString("#FFFFFC"))
+                                        ));
+                        player.sendMessage(Component.text("-------------------------").decorate(TextDecoration.STRIKETHROUGH).color(TextColor.fromHexString("#555555")));
+                    }
+                    pointsAPI.give(playerUUID, (addedCoins + rankBonus));
+                    player.sendActionBar(Component.text("You earned " + (addedCoins + rankBonus) + " Parcoins!").color(TextColor.fromHexString("#FFFFFC")));
+                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
+
+                    int finalAddedCoins = addedCoins + rankBonus;
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
+                        if (player.isOnline()) {
+                            player.sendActionBar(Component.text("You earned " + finalAddedCoins + " Parcoins!").color(TextColor.fromHexString("#FFFFFC")));
+                        }
+                    }, 40);
+                } else {
+                    player.sendMessage(Component.text(":cancel: You did not receive any Parcoins because you used /tpa or /spectate :cancel:").color(TextColor.fromHexString("#FF0000")));
                 }
             }
         }

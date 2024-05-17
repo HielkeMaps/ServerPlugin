@@ -1,5 +1,6 @@
 package io.github.hielkemaps.serverplugin.commands;
 
+import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.IntegerArgument;
@@ -25,7 +26,11 @@ public class Highscores {
 
                     List<ScorePair> highscores = getHighScores(count);
 
-                    Bukkit.getLogger().info("---------------------------------------------------------");
+                    if(highscores.size() == 0){
+                        throw CommandAPI.failWithString("No highscores found");
+                    }
+
+                    Bukkit.getLogger().info("-------------------------------Highscores-------------------------------");
                     for (int i = 0; i < highscores.size(); i++) {
                         ScorePair pair = highscores.get(i);
                         int score = pair.getScore();
@@ -55,6 +60,9 @@ public class Highscores {
         }
 
         Collections.sort(list);
+
+        if(list.size() <= maxCount) return list;
+
         list.subList(maxCount, list.size()).clear();
         return list;
     }
