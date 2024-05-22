@@ -212,7 +212,7 @@ public class Main extends JavaPlugin {
                         }
                     }, 40);
                 } else {
-                    player.sendMessage(Component.text(":cancel: You did not receive any Parcoins because you used /tpa or /spectate :cancel:").color(TextColor.fromHexString("#FF0000")));
+                    player.sendMessage(Component.text(":cancel: You did not receive any Parcoins because you used /tpa :cancel:").color(TextColor.fromHexString("#FF0000")));
                 }
             }
         }

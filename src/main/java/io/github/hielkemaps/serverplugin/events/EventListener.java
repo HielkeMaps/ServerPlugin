@@ -59,6 +59,12 @@ public class EventListener implements Listener {
                 onlinePlayers.forEach(CommandAPI::updateRequirements);
             }
         }
+
+        // Add to finished players if has tag
+        Player player = e.getPlayer();
+        if(player.getScoreboardTags().contains("finished")){
+            Main.finishedPlayers.add(player.getUniqueId());
+        }
     }
 
     @EventHandler
