@@ -3,7 +3,7 @@ package io.github.hielkemaps.serverplugin.commands;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
-import dev.jorel.commandapi.arguments.PlayerArgument;
+import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.OfflinePlayer;
@@ -26,7 +26,7 @@ public class Spectate {
             p.setGameMode(GameMode.SPECTATOR);
         }).register();
         (new CommandAPICommand("spectate"))
-                .withArguments(new PlayerArgument("player").replaceSuggestions(ArgumentSuggestions.strings(info ->
+                .withArguments(new EntitySelectorArgument.OnePlayer("player").replaceSuggestions(ArgumentSuggestions.strings(info ->
                         Bukkit.getOnlinePlayers().stream().filter(player -> !player.getGameMode().equals(GameMode.SPECTATOR) && !info.sender().getName().equals(player.getName())).map(OfflinePlayer::getName).toArray(String[]::new)))
                 )
                 .executesPlayer((p, args) -> {

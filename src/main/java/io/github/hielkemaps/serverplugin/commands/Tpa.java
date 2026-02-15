@@ -3,7 +3,7 @@ package io.github.hielkemaps.serverplugin.commands;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
-import dev.jorel.commandapi.arguments.PlayerArgument;
+import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import io.github.hielkemaps.serverplugin.Main;
 import io.github.hielkemaps.serverplugin.wrapper.PlayerManager;
 import io.github.hielkemaps.serverplugin.wrapper.PlayerWrapper;
@@ -35,7 +35,7 @@ public class Tpa {
     public Tpa() {
         new CommandAPICommand("tpa")
                 .withRequirement(this.othersOnline)
-                .withArguments((new PlayerArgument("player"))
+                .withArguments((new EntitySelectorArgument.OnePlayer("player"))
                         .replaceSuggestions(ArgumentSuggestions.strings((info) -> Bukkit.getOnlinePlayers().stream().map(OfflinePlayer::getName).filter((name) -> !info.sender().getName().equals(name)).toArray(String[]::new))))
                 .executesPlayer((p, args) -> {
                     Player target = (Player) args.get("player");
