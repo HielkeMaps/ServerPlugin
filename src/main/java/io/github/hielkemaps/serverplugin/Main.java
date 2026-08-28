@@ -2,6 +2,7 @@ package io.github.hielkemaps.serverplugin;
 
 import dev.jorel.commandapi.CommandAPI;
 import io.github.hielkemaps.serverplugin.commands.*;
+import io.github.hielkemaps.serverplugin.events.CosmeticEquipGate;
 import io.github.hielkemaps.serverplugin.events.EventListener;
 import io.github.hielkemaps.serverplugin.wrapper.PlayerManager;
 import io.github.hielkemaps.serverplugin.wrapper.PlayerWrapper;
@@ -48,10 +49,16 @@ public class Main extends JavaPlugin {
 
     public void onEnable() {
         this.saveDefaultConfig();
+        // Merge new default keys (e.g. the wardrobe section) into an existing config.yml
+        this.getConfig().options().copyDefaults(true);
+        this.saveConfig();
         new ReloadConfig();
 
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         this.getServer().getPluginManager().registerEvents(new EventListener(), this);
+        if (this.getServer().getPluginManager().getPlugin("HMCCosmetics") != null) {
+            this.getServer().getPluginManager().registerEvents(new CosmeticEquipGate(), this);
+        }
 
         this.getServer().getScheduler().scheduleSyncRepeatingTask(instance, Main::tick, 1L, 1L);
         this.getServer().getScheduler().scheduleSyncRepeatingTask(instance, Main::tick_20, 1L, 20L);
@@ -85,6 +92,10 @@ public class Main extends JavaPlugin {
 
         if (!disabledCommands.contains("localtime")) new LocalTime();
         else CommandAPI.unregister("localtime");
+
+        boolean hmcc = Bukkit.getPluginManager().getPlugin("HMCCosmetics") != null;
+        if (hmcc && !disabledCommands.contains("wardrobe")) new Wardrobe();
+        else CommandAPI.unregister("wardrobe");
 
         Bukkit.getOnlinePlayers().forEach(CommandAPI::updateRequirements);
     }

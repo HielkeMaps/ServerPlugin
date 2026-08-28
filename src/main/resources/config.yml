@@ -1,5 +1,16 @@
 # commands that can be disabled:
-# hub, spectate, tpa, highscores
+# hub, spectate, tpa, highscores, localtime, wardrobe
 disabled-commands: []
 points-given: 100
 points-bonus: 50
+
+# /wardrobe: opens the HMCCosmetics cosmetics menu (maps have no physical wardrobe; that is Lobby-only).
+wardrobe:
+  # who may open the menu. Empty = everyone.
+  permission: ""
+  no-permission-message: ""
+  # who may actually equip cosmetics (checked on every equip). Same LuckPerms node as the Lobby (VIP+).
+  equip-permission: "lobbyplugin.wardrobe"
+  equip-no-permission-message: "<red>Equipping cosmetics is for <gold>VIP</gold> and up! Get a rank at <aqua><click:open_url:'https://store.hielkemaps.com'><hover:show_text:'Click to visit!'>store.hielkemaps.com</hover></click></aqua>"
+  console-commands:
+    - "cosmetic menu hielkemaps_hats_1 %player_name%"

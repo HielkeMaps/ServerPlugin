@@ -6,15 +6,15 @@
 
     <groupId>io.github.hielkemaps</groupId>
     <artifactId>ServerPlugin</artifactId>
-    <version>1.2.2</version>
+    <version>1.3.0</version>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>17</source>
-                    <target>17</target>
+                    <source>21</source>
+                    <target>21</target>
                 </configuration>
             </plugin>
         </plugins>
@@ -24,13 +24,13 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.21.11-R0.1-SNAPSHOT</version>
+            <version>26.2.build.118-stable</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>dev.jorel</groupId>
             <artifactId>commandapi-paper-core</artifactId>
-            <version>11.1.0</version>
+            <version>12.0.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -44,6 +44,14 @@
             <artifactId>api</artifactId>
             <version>5.4</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <!-- our fork's build (../HMCCosmetics, branch hielke); only the api.events package is used -->
+            <groupId>com.hibiscusmc</groupId>
+            <artifactId>HMCCosmeticsRemapped</artifactId>
+            <version>2.9.2</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../HMCCosmetics/build/libs/HMCCosmeticsRemapped-2.9.2.jar</systemPath>
         </dependency>
     </dependencies>
 
